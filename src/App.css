@@ -1,0 +1,291 @@
+* {
+  color: white;
+}
+
+* ::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+* ::-webkit-scrollbar {
+  width: 10px;
+  background-color: transparent;
+}
+
+* ::-webkit-scrollbar-thumb {
+  background-color: lightGrey;
+  border-radius: 10px;
+}
+
+.App {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+.dashBoard {
+  height: 100vh;
+}
+
+.loader {
+  position: absolute;
+  z-index: 100097;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.innerContainer {
+  height: calc(100% - 56px);
+}
+
+.h-fill {
+  height: -webkit-fill-available;
+}
+
+.tabActions {
+  height: 29px;
+}
+
+.btn-tabAction {
+  height: 25px;
+  margin: 0;
+  padding: 0 15px;
+}
+
+.btn-error-graditant {
+  padding: 0 10px !important;
+  background: black;
+  padding: 2px;
+  border-radius: 5px;
+  border: solid 2px red;
+  margin: 0 3px;
+}
+
+.btn-error {
+  padding: 0 10px !important;
+  background: rgb(179 18 18);
+  padding: 2px;
+  border-radius: 5px;
+  border: none;
+  margin: 0 10px;
+  border: 2px solid red;
+}
+
+.btnPrimary {
+  padding: 0 10px !important;
+  background: rgb(52, 165, 7);
+  border-radius: 5px;
+  margin: 0 10px;
+  border: 2px solid #93d300;
+}
+
+.btnSecondary {
+  padding: 0 10px !important;
+  background: linear-gradient(
+    to bottom,
+    white,
+    #018fe2,
+    #018fe2,
+    #018fe2,
+    #018fe2
+  ) !important;
+  border-radius: 5px;
+  margin: 0 10px;
+  border: none;
+}
+
+.btnWarning {
+  padding: 0 10px !important;
+  background: linear-gradient(to bottom, white, grey, grey, grey) !important;
+  border-radius: 5px;
+  margin: 0 10px;
+  border: none;
+}
+
+.disableTab {
+  padding: 2px;
+  color: rgb(151, 151, 151);
+  width: 130px !important;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(151, 151, 151);
+  cursor: pointer;
+}
+
+.runnersDashboard {
+  height: 560px;
+  overflow: auto;
+}
+
+.card {
+  background: linear-gradient(
+    to bottom,
+    white,
+    #6c757d,
+    #6c757d,
+    #6c757d,
+    #6c757d
+  );
+  cursor: pointer;
+}
+
+.innerContainer ul {
+  width: 100%;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  overflow: auto;
+}
+
+.innerContainer li {
+  width: 100%;
+  padding: 5px;
+}
+
+.innerContainer li:nth-child(even) {
+  background-color: rgb(48, 48, 48);
+}
+
+.tickerFields {
+  display: grid;
+  align-items: center;
+}
+
+.tickerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tickerName {
+  display: flex;
+  font-size: 15px;
+  font-weight: bolder;
+  justify-content: space-between;
+}
+
+.tickerInputs {
+  background-color: rgb(91, 77, 77);
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  max-width: 90px;
+  font-size: 15px;
+  padding: 5px;
+}
+
+.activeTab {
+  background-color: rgb(60, 62, 63);
+  width: 130px !important;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid rgb(151, 151, 151);
+  border-bottom: none;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.content {
+  background-color: rgb(63, 63, 63);
+  height: calc(100% - 31px);
+}
+
+.content-div {
+  transition: ease-in-out 0.1s;
+}
+
+.postionsContent {
+  height: 100%;
+  display: flex;
+}
+
+.headingbar {
+  background-color: rgb(47, 47, 47);
+  width: 100%;
+  box-shadow: 5px 5px 5px black;
+}
+
+.sliderButton {
+  width: 25px;
+  height: 100%;
+  background-color: rgb(96, 96, 96);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.quickPosition {
+  width: 100%;
+}
+
+.watchlistName {
+  background-color: rgb(110 110 110);
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+  margin: 0;
+  align-items: center;
+  width: 100%;
+}
+
+.positions {
+  height: 520px;
+}
+
+.watchlist {
+  height: 450px;
+  overflow: overlay;
+}
+
+.selectInput {
+  width: 120px;
+  background-color: rgb(91, 77, 77);
+}
+
+.upgrade {
+  color: rgb(48, 236, 57);
+  font-weight: bolder;
+}
+
+.newsFlag {
+  color: rgb(140, 196, 234);
+  font-weight: bolder;
+}
+
+table{
+  width: 100%;
+  height: fit-content;
+}
+
+table{
+  background-color: rgb(47, 47, 47);
+}
+
+th {
+  text-transform: uppercase;
+}
+
+thead {
+  border-bottom: 2px solid whitesmoke;
+}
+
+.Pending {
+  background-color: #018fe2;
+}
+
+.Error {
+  background-color: red;
+}
+
+.Success {
+  background-color: rgb(48, 236, 57);
+}
