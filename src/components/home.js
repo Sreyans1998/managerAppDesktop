@@ -19,7 +19,7 @@ import Positons from "./positions";
 import Watchlist from "./watchList";
 
 const Home = ({ setOperations, operations }) => {
-  // const { ipcRenderer } = window?.electron;
+  const { ipcRenderer } = window?.electron;
   const [buyTicker, setBuyTicker] = useState("");
   const [buyQuantity, setBuyQuantity] = useState(1000);
   const [showPosition, setShowPosition] = useState(false);
@@ -547,7 +547,7 @@ const Home = ({ setOperations, operations }) => {
 
   const logFileCreation = (message, payload, messageType) => {
     try {
-      // ipcRenderer.send("LOG-EVENT", { message, payload, messageType });
+      ipcRenderer.send("LOG-EVENT", { message, payload, messageType });
     } catch (error) {
       console.log(error.message, "error");
     }

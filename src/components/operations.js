@@ -6,7 +6,6 @@ const Operations = ({ operations }) => {
     
     return (
         <div>
-            hello
             <Table tableContent={operations} isOperations={true} />
         </div>
     );
