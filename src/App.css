@@ -8,6 +8,7 @@
 
 * ::-webkit-scrollbar {
   width: 10px;
+  height: 10px;
   background-color: transparent;
 }
 
@@ -50,11 +51,11 @@
   height: 29px;
 }
 
-.btn-tabAction {
+/* .btn-tabAction {
   height: 25px;
-  margin: 0;
+  margin-right: 5px;
   padding: 0 15px;
-}
+} */
 
 .btn-error-graditant {
   padding: 0 10px !important;
@@ -62,25 +63,27 @@
   padding: 2px;
   border-radius: 5px;
   border: solid 2px red;
-  margin: 0 3px;
+  margin: 0 3px 0 0;
 }
 
 .btn-error {
   padding: 0 10px !important;
-  background: rgb(179 18 18);
-  padding: 2px;
+  background: #c00;
   border-radius: 5px;
   border: none;
-  margin: 0 10px;
-  border: 2px solid red;
+  /* margin: 0 10px; */
+  border: 2px solid black;
+  color: white;
+  text-transform: uppercase;
 }
 
 .btnPrimary {
   padding: 0 10px !important;
-  background: rgb(52, 165, 7);
+  background: rgb(51, 107, 53);
   border-radius: 5px;
   margin: 0 10px;
-  border: 2px solid #93d300;
+  border: 2px solid black;
+  text-transform: uppercase;
 }
 
 .btnSecondary {
@@ -257,25 +260,43 @@
 }
 
 .newsFlag {
-  color: rgb(140, 196, 234);
-  font-weight: bolder;
+  color: rgb(140, 196, 234) !important;
+  font-weight: bolder !important;
 }
 
-table{
-  width: 100%;
+.bgNewsFlag {
+  background-color: rgb(140, 196, 234);
+}
+
+table {
+  width: max-content;
   height: fit-content;
 }
 
-table{
+table {
   background-color: rgb(47, 47, 47);
 }
 
 th {
   text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid black;
+}
+
+tr {
+  width: fit-content;
+  height: fit-content;
+  padding: 5px;
 }
 
 thead {
   border-bottom: 2px solid whitesmoke;
+}
+
+.tableCell {
+  border: 1px solid black;
+  font-weight: 600;
+  border-radius: 5px;
 }
 
 .Pending {
@@ -287,5 +308,41 @@ thead {
 }
 
 .Success {
-  background-color: rgb(48, 236, 57);
+  background-color: green;
+}
+
+.mapChart {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px; /* Remove padding */
+  margin: 0; /* Remove margin */
+  width: 100%;
+}
+
+.imgChart {
+  display: grid;
+  flex-direction: row;
+  background-color: blue;
+  border: 3px solid white;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.tooltip {
+  position: absolute;
+  display: block;
+  background-color: rgb(47, 47, 47);
+  border: none;
+  padding: 5px;
+  color: white;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 99999999999;
+}
+
+.hovered rect {
+  stroke: #018fe2;
+  stroke-width: 5px;
 }

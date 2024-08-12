@@ -17,9 +17,11 @@ import NavBar from "./navBar";
 import Operations from "./operations";
 import Positons from "./positions";
 import Watchlist from "./watchList";
+import Sentiments from "./sentiments";
+import Upgrades from "./upgrades";
 
 const Home = ({ setOperations, operations }) => {
-  const { ipcRenderer } = window?.electron;
+  // const { ipcRenderer } = window?.electron;
   const [buyTicker, setBuyTicker] = useState("");
   const [buyQuantity, setBuyQuantity] = useState(1000);
   const [showPosition, setShowPosition] = useState(false);
@@ -38,6 +40,7 @@ const Home = ({ setOperations, operations }) => {
   const [apiCallParams, setApiCallParams] = useState([]);
   const [isRefreshCall, setIsRefreshCall] = useState(false);
   const [activeTabHeader, setActiveTabHeader] = useState("RUNNERS");
+  const [isRenderingDataCall, setIsRenderingDataCall] = useState(false);
 
   const toastCall = (message, type) => {
     try {
@@ -51,7 +54,7 @@ const Home = ({ setOperations, operations }) => {
         draggable: true,
       });
     } catch (error) {
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -64,155 +67,187 @@ const Home = ({ setOperations, operations }) => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const getOrdersDetails = async () => {
     try {
       if (apiCallParams.length <= 0 || !isPendingRquest) {
         const response = await getOrders();
         if (response.status === 200) {
           const data = await response.json();
-          logFileCreation(`Orders API call success.`, data, "success");
+          // logFileCreation(`Orders API call success.`, data, "success");
           if (data?.results.length > 0) {
             const orderData = data?.results[0];
 
-            let payload = {
-              symbol: orderData?.ticker,
-              order_id: orderData?.order_id,
-            };
-            switch (orderData?.order_type) {
-              case "STOP_LOSS":
-                if (orderData?.status === "cancelled") {
-                  setOperations((prev) => [
-                    ...prev,
-                    {
-                      OperationType: "CANCEL_STOP",
-                      status: "Pending",
-                      id: operations.length,
-                      payload: JSON.stringify(payload),
-                    },
-                  ]);
-                  setApiCallParams((previousValue) => [
-                    ...previousValue,
-                    {
-                      type: "CANCEL_STOP",
-                      payload,
-                      ordersCalls: true,
-                      id: operations.length,
-                    },
-                  ]);
+            const apiCallFound = apiCallParams.find((element) => {
+              if (element?.payload?.symbol === orderData?.ticker && element?.ordersCalls) {
+                if (["BUY", "SELL"].includes(orderData?.order_type)) {
+                  return element;
+                } else if (
+                  orderData?.type === "STOP_LOSS" &&
+                  (orderData?.status === "cancelled" ||
+                    orderData?.price === element?.payload?.stop_price)
+                ) {
+                  return element;
+                } else if (
+                  orderData?.type === "MIT" &&
+                  (orderData?.status === "cancelled" ||
+                    orderData?.price === element?.payload?.price)
+                ) {
+                  return element;
                 } else {
-                  payload["stop_price"] = parseFloat(orderData.price);
-                  setOperations((prev) => [
-                    ...prev,
-                    {
-                      OperationType: "ADD_STOP",
-                      status: "Pending",
-                      id: operations.length,
-                      payload: JSON.stringify(payload),
-                    },
-                  ]);
-                  setApiCallParams((previousValue) => [
-                    ...previousValue,
-                    {
-                      type: "ADD_STOP",
-                      payload,
-                      ordersCalls: true,
-                      id: operations.length,
-                    },
-                  ]);
+                  return null;
                 }
-                break;
-              case "MIT":
-                if (orderData?.status === "cancelled") {
+              } else {
+                return null;
+              }
+            });
+            if (apiCallFound) {
+              let payload = {
+                symbol: orderData?.ticker,
+                order_id: orderData?.order_id,
+              };
+              switch (orderData?.order_type) {
+                case "STOP_LOSS":
+                  if (orderData?.status === "cancelled") {
+                    setOperations((prev) => [
+                      ...prev,
+                      {
+                        ticker: orderData?.ticker,
+                        price: "-",
+                        OperationType: "CANCEL_STOP",
+                        status: "Pending",
+                        id: operations.length,
+                      },
+                    ]);
+                    setApiCallParams((previousValue) => [
+                      ...previousValue,
+                      {
+                        type: "CANCEL_STOP",
+                        payload,
+                        ordersCalls: true,
+                        id: operations.length,
+                      },
+                    ]);
+                  } else {
+                    payload["stop_price"] = parseFloat(orderData.price);
+                    setOperations((prev) => [
+                      ...prev,
+                      {
+                        ticker: orderData?.ticker,
+                        price: orderData.price,
+                        OperationType: "ADD_STOP",
+                        status: "Pending",
+                        id: operations.length,
+                      },
+                    ]);
+                    setApiCallParams((previousValue) => [
+                      ...previousValue,
+                      {
+                        type: "ADD_STOP",
+                        payload,
+                        ordersCalls: true,
+                        id: operations.length,
+                      },
+                    ]);
+                  }
+                  break;
+                case "MIT":
+                  if (orderData?.status === "cancelled") {
+                    setOperations((prev) => [
+                      ...prev,
+                      {
+                        ticker: orderData?.ticker,
+                        price: "-",
+                        OperationType: "CANCEL_MIT",
+                        status: "Pending",
+                        id: operations.length,
+                      },
+                    ]);
+                    setApiCallParams((previousValue) => [
+                      ...previousValue,
+                      {
+                        type: "CANCEL_MIT",
+                        payload,
+                        ordersCalls: true,
+                        id: operations.length,
+                      },
+                    ]);
+                  } else {
+                    payload["price"] = parseFloat(orderData.price);
+                    setOperations((prev) => [
+                      ...prev,
+                      {
+                        ticker: orderData?.ticker,
+                        price: orderData?.price,
+                        OperationType: "ADD_MIT",
+                        status: "Pending",
+                        id: operations.length,
+                      },
+                    ]);
+                    setApiCallParams((previousValue) => [
+                      ...previousValue,
+                      {
+                        type: "ADD_MIT",
+                        payload,
+                        ordersCalls: true,
+                        id: operations.length,
+                      },
+                    ]);
+                  }
+                  break;
+                case "BUY":
                   setOperations((prev) => [
                     ...prev,
                     {
-                      OperationType: "CANCEL_MIT",
+                      ticker: orderData?.ticker,
+                      price: "-",
+                      OperationType: "BUY",
                       status: "Pending",
                       id: operations.length,
-                      payload: JSON.stringify(payload),
                     },
                   ]);
                   setApiCallParams((previousValue) => [
                     ...previousValue,
                     {
-                      type: "CANCEL_MIT",
+                      type: "BUY",
                       payload,
                       ordersCalls: true,
                       id: operations.length,
                     },
                   ]);
-                } else {
-                  payload["price"] = parseFloat(orderData.price);
+                  break;
+                case "SELL":
                   setOperations((prev) => [
                     ...prev,
                     {
-                      OperationType: "ADD_MIT",
+                      ticker: orderData?.ticker,
+                      price: "-",
+                      OperationType: "SELL",
                       status: "Pending",
                       id: operations.length,
-                      payload: JSON.stringify(payload),
                     },
                   ]);
                   setApiCallParams((previousValue) => [
                     ...previousValue,
                     {
-                      type: "ADD_MIT",
+                      type: "SELL",
                       payload,
                       ordersCalls: true,
                       id: operations.length,
                     },
                   ]);
-                }
-                break;
-              case "BUY":
-                setOperations((prev) => [
-                  ...prev,
-                  {
-                    OperationType: "BUY",
-                    status: "Pending",
-                    id: operations.length,
-                    payload: JSON.stringify(payload),
-                  },
-                ]);
-                setApiCallParams((previousValue) => [
-                  ...previousValue,
-                  {
-                    type: "BUY",
-                    payload,
-                    ordersCalls: true,
-                    id: operations.length,
-                  },
-                ]);
-                break;
-              case "SELL":
-                setOperations((prev) => [
-                  ...prev,
-                  {
-                    OperationType: "SELL",
-                    status: "Pending",
-                    id: operations.length,
-                    payload: JSON.stringify(payload),
-                  },
-                ]);
-                setApiCallParams((previousValue) => [
-                  ...previousValue,
-                  {
-                    type: "SELL",
-                    payload,
-                    ordersCalls: true,
-                    id: operations.length,
-                  },
-                ]);
-                break;
-              default:
-                break;
+                  break;
+                default:
+                  break;
+              }
             }
           }
         } else {
-          logFileCreation(response.message, response, "error");
+          // logFileCreation(response.message, response, "error");
         }
       }
     } catch (error) {
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -242,12 +277,13 @@ const Home = ({ setOperations, operations }) => {
               break;
           }
         });
-        if (apiData.ordersCalls) {
-          setIsPendingRquest(false);
-          return;
-        }
+        // if (apiData.ordersCalls) {
+        //   setIsPendingRquest(false);
+        //   return;
+        // }
         const response = await apiPromise;
         if (response.status === 200) {
+          setIsPendingRquest(false);
           setOperations((prevOperations) =>
             prevOperations.map((element) => {
               if (apiData?.id === element?.id) {
@@ -260,20 +296,21 @@ const Home = ({ setOperations, operations }) => {
             setBuyList([...buyList, apiData?.payload?.symbol]);
           }
           const responseData = await response.json();
-          logFileCreation(
-            `${apiData?.type} API call success.`,
-            responseData,
-            "success"
-          );
+          // logFileCreation(
+          //   `${apiData?.type} API call success.`,
+          //   responseData,
+          //   "success"
+          // );
           if (apiData?.type === "POSITION") {
             setTimeout(() => {
               setOperations((prev) => [
                 ...prev,
                 {
+                  ticker: "-",
+                  price: "-",
                   OperationType: "POSITION",
                   status: "Pending",
                   id: operations.length,
-                  payload: JSON.stringify({}),
                 },
               ]);
               setApiCallParams((previousValue) => [
@@ -336,10 +373,11 @@ const Home = ({ setOperations, operations }) => {
               setOperations((prev) => [
                 ...prev,
                 {
+                  ticker: "-",
+                  price: "-",
                   OperationType: "POSITION",
                   status: "Pending",
                   id: operations.length,
-                  payload: JSON.stringify({}),
                 },
               ]);
               setApiCallParams((previousValue) => [
@@ -355,7 +393,7 @@ const Home = ({ setOperations, operations }) => {
             `Something went wrong with ${apiData?.type} order.`,
             "error"
           );
-          logFileCreation(response.message, response, "error");
+          // logFileCreation(response.message, response, "error");
         }
         setIsPendingRquest(false);
         return;
@@ -369,7 +407,7 @@ const Home = ({ setOperations, operations }) => {
       });
       setOperations(tempOperations);
       setIsPendingRquest(false);
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -382,16 +420,19 @@ const Home = ({ setOperations, operations }) => {
   }, [apiCallParams, isPendingRquest]);
 
   useEffect(() => {
-    const intervalId = setInterval(getOrdersDetails, 5000);
-    return () => clearInterval(intervalId);
-  }, [getOrdersDetails]);
+    if (!isRenderingDataCall) {
+      const intervalId = setInterval(getOrdersDetails, 10000);
+      return () => clearInterval(intervalId);
+    }
+  }, [getOrdersDetails, isRenderingDataCall]);
 
   const getRenderingData = async () => {
     try {
+      setIsRenderingDataCall(true);
       getAllPositions();
       getAllRunners();
     } catch (error) {
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -399,23 +440,25 @@ const Home = ({ setOperations, operations }) => {
     try {
       if (!isPendingRquest) {
         const responseData = await getPosition();
+        setIsRenderingDataCall(false);
         setIsRefreshCall(false);
         apiCalls();
         if (responseData.status === 200) {
           const data = await responseData.json();
-          logFileCreation(
-            "Position API call success.",
-            responseData,
-            "success"
-          );
+          // logFileCreation(
+          //   "Position API call success.",
+          //   responseData,
+          //   "success"
+          // );
           setTimeout(() => {
             setOperations((prev) => [
               ...prev,
               {
+                ticker: "-",
+                price: "-",
                 OperationType: "POSITION",
                 status: "Pending",
                 id: operations.length,
-                payload: JSON.stringify({}),
               },
             ]);
             setApiCallParams((previousValue) => [
@@ -464,10 +507,11 @@ const Home = ({ setOperations, operations }) => {
             setOperations((prev) => [
               ...prev,
               {
+                ticker: "-",
+                price: "-",
                 OperationType: "POSITION",
                 status: "Pending",
                 id: operations.length,
-                payload: JSON.stringify({}),
               },
             ]);
             setApiCallParams((previousValue) => [
@@ -478,11 +522,11 @@ const Home = ({ setOperations, operations }) => {
               },
             ]);
           }, 60000);
-          logFileCreation(responseData.message, responseData, "error");
+          // logFileCreation(responseData.message, responseData, "error");
         }
       }
     } catch (error) {
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -491,8 +535,22 @@ const Home = ({ setOperations, operations }) => {
       const response = await getRunners();
       if (response.status === 200) {
         const responseData = await response.json();
-        logFileCreation("Runners API call success.", responseData, "success");
-        let tempRunners = responseData?.message;
+        // logFileCreation("Runners API call success.", responseData, "success");
+        let tempRunners = responseData?.results;
+        tempRunners = tempRunners.sort((a, b) => {
+          const aNewsFlag = a?.news_flag;
+          const bNewsFlag = b?.news_flag;
+
+          // If both have the same news_flag value, maintain original order
+          if (aNewsFlag === bNewsFlag) return 0;
+
+          // If a has news_flag true and b does not, a should come before b
+          if (aNewsFlag) return -1;
+
+          // If b has news_flag true and a does not, b should come before a
+          return 1;
+        });
+
         setRunners(tempRunners);
         let tempWatchList = watchList.map((element) => {
           if (element?.watchlistName === "RUNNERS") {
@@ -502,10 +560,10 @@ const Home = ({ setOperations, operations }) => {
         });
         setWatchList(tempWatchList);
       } else {
-        logFileCreation(response.message, response, "error");
+        // logFileCreation(response.message, response, "error");
       }
     } catch (error) {
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
@@ -522,10 +580,11 @@ const Home = ({ setOperations, operations }) => {
       setOperations((prev) => [
         ...prev,
         {
+          ticker: ticker.length > 0 ? ticker : "-",
+          price: "-",
           OperationType: "BUY",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify(payload),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -541,17 +600,17 @@ const Home = ({ setOperations, operations }) => {
     } catch (error) {
       setIsPendingRquest(false);
       toastCall(error.message, "error");
-      logFileCreation(error.message, error, "error");
+      // logFileCreation(error.message, error, "error");
     }
   };
 
-  const logFileCreation = (message, payload, messageType) => {
-    try {
-      ipcRenderer.send("LOG-EVENT", { message, payload, messageType });
-    } catch (error) {
-      console.log(error.message, "error");
-    }
-  };
+  // const logFileCreation = (message, payload, messageType) => {
+  //   try {
+  //     // ipcRenderer.send("LOG-EVENT", { message, payload, messageType });
+  //   } catch (error) {
+  //     console.log(error.message, "error");
+  //   }
+  // };
 
   const componentCall = () => {
     try {
@@ -564,8 +623,13 @@ const Home = ({ setOperations, operations }) => {
               showPosition={showPosition}
             />
           );
+        case "UPGRADES":
+          return <Upgrades />
         case "OPERATIONS":
           return <Operations operations={operations} />;
+
+        case "SENTIMENTS":
+          return <Sentiments />;
 
         default:
           return null;
@@ -606,7 +670,7 @@ const Home = ({ setOperations, operations }) => {
             </div>
             <div className="col-12">
               <button
-                className="btnSecondary"
+                className="btnPrimary"
                 onClick={(e) => handleBuyTicker(e, buyTicker, buyQuantity)}
               >
                 Buy
@@ -692,10 +756,21 @@ const Home = ({ setOperations, operations }) => {
               >
                 OPERATIONS
               </span>
+              <span
+                className={
+                  activeTab === "SENTIMENTS" ? "activeTab" : "disableTab"
+                }
+                onClick={() => {
+                  setActiveTab("SENTIMENTS");
+                  setActiveTabHeader("SENTIMENTS");
+                }}
+              >
+                SENTIMENTS
+              </span>
             </div>
             <div className="tabActions">
               <button
-                className="btnSecondary btn-tabAction"
+                className="btnPrimary"
                 onClick={() => {
                   getRenderingData();
                   setIsRefreshCall(true);

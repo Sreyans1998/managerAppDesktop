@@ -1,4 +1,5 @@
 const baseUrl = "http://localhost:8000/";
+const analystBaseUrl = "http://ec2-3-82-162-247.compute-1.amazonaws.com:8088/";
 export function getPosition() {
     return fetch(baseUrl + "api/positions/", {
         method: "GET",
@@ -134,4 +135,64 @@ export function getOrders(payload) {
     }).catch((error) => {
         return error;
     })
+};
+
+export function getSentiments() {
+    return fetch(analystBaseUrl + "sentiments/", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
+};
+
+export function getRunSentiments(payload) {
+    return fetch(analystBaseUrl + "run_sentiments/", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
+};
+
+export function getUpgrades() {
+    return fetch(analystBaseUrl + "upgrades", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
+};
+
+export function getRunUpgrades(payload) {
+    return fetch(analystBaseUrl + "run_upgrades/", {
+      method: "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    })
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
 };

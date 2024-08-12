@@ -51,7 +51,7 @@ const Watchlist = ({ watchList, setWatchList, buyList, handleBuyTicker }) => {
                         return (
                           <li className="d-flex justify-content-between" key={i}>
                             <div
-                              classname={
+                              className={
                                 item?.upgrade > 0
                                   ? "upgrade"
                                   : item?.news_flag
@@ -62,7 +62,7 @@ const Watchlist = ({ watchList, setWatchList, buyList, handleBuyTicker }) => {
                               {item?.ticker}
                             </div>
                             <button
-                              className="btnSecondary"
+                              className="btnPrimary"
                               onClick={(e) => handleBuyTicker(e, item?.ticker)}
                             >
                               {buyList.includes(item?.ticker)

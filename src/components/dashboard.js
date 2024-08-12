@@ -3,7 +3,7 @@ import React from "react";
 
 const Dashboard = ({ runners, handleBuyTicker, showPosition }) => {
   return (
-    <div>
+    <div className="row">
       {runners && runners.length > 0
         ? runners.map((item) => {
             return (
@@ -15,13 +15,11 @@ const Dashboard = ({ runners, handleBuyTicker, showPosition }) => {
                 onClick={(e) => handleBuyTicker(e, item.ticker)}
               >
                 <div className="card p-0">
-                  <div className="card-body">
+                  <div className={classNames("card-body", `${item?.news_flag > 0 ? "bgNewsFlag" : ""}` )}>
                     <h3
                       className={
                         item?.upgrade > 0
                           ? "upgrade"
-                          : item?.news_flag
-                          ? "newsFlag"
                           : "text-light"
                       }
                     >

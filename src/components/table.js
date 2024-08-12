@@ -1,6 +1,7 @@
+import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 
-const Table = ({ tableContent, isOperations }) => {
+const Table = ({ tableContent, isOperations = false }) => {
   const [headerList, setHeadersList] = useState([]);
   const [sortedTableContent, setSortedTableContent] = useState([]);
 
@@ -24,7 +25,7 @@ const Table = ({ tableContent, isOperations }) => {
           <thead>
             <tr>
               {headerList.map((item, index) => {
-                return <th key={index}>{item}</th>;
+                if (item !== "id") return <th key={index}>{item}</th>;
               })}
             </tr>
           </thead>
@@ -33,14 +34,18 @@ const Table = ({ tableContent, isOperations }) => {
               return (
                 <tr key={rowIndex}>
                   {headerList.map((colItem, colIndex) => {
-                    return (
-                      <td
-                        key={colIndex}
-                        className={isOperations ? `${element.status}` : ""}
-                      >
-                        {element[`${colItem}`]}
-                      </td>
-                    );
+                    if (colItem !== "id" && element?.OperationType !== "POSITION")
+                      return (
+                        <td
+                          key={colIndex}
+                          className={classNames(
+                            `${isOperations ? `${element.status}` : ""}`,
+                            "tableCell"
+                          )}
+                        >
+                          {element[`${colItem}`]}
+                        </td>
+                      );
                   })}
                 </tr>
               );

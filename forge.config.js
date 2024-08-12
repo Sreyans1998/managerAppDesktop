@@ -1,7 +1,6 @@
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 const path = require('path');
-const { WebpackPlugin } = require('@electron-forge/plugin-webpack');
 
 
 

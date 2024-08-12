@@ -38,13 +38,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: symbol,
+          price: price,
           OperationType: "ADD_STOP",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({
-            symbol,
-            stop_price: parseFloat(price),
-          }),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -78,12 +76,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: symbol,
+          price: "-",
           OperationType: "CANCEL_STOP",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({
-            symbol,
-          }),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -108,13 +105,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: symbol,
+          price: price,
           OperationType: "ADD_MIT",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({
-            symbol,
-            price: parseFloat(price),
-          }),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -147,12 +142,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: symbol,
+          price: "-",
           OperationType: "CANCEL_MIT",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({
-            symbol,
-          }),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -223,13 +217,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: symbol,
+          price: "-",
           OperationType: "SELL",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({
-            symbol,
-            percentage: parseInt(percentage),
-          }),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -254,10 +246,11 @@ const Positions = ({
       setOperations((prev) => [
         ...prev,
         {
+          ticker: "All-ticker",
+          price: "-",
           OperationType: "SEL_ALL",
           status: "Pending",
           id: operations.length,
-          payload: JSON.stringify({}),
         },
       ]);
       setApiCallParams((previousValue) => [
@@ -285,7 +278,7 @@ const Positions = ({
         <div className="headingbar">POSITION</div>
         <div className="tabActions w-100 mt-2 d-flex justify-content-end px-2">
           <button
-            className="btn btn-danger btn-tabAction"
+            className="btn-error"
             onClick={handleSellAll}
           >
             SELL ALL
@@ -313,7 +306,7 @@ const Positions = ({
                             80%
                           </button>
                           <button
-                            className="btn-error"
+                            className="btn-error-graditant"
                             onClick={(e) => handleSell(e, item?.symbol, 100)}
                           >
                             100%
@@ -429,7 +422,7 @@ const Positions = ({
                             80%
                           </button>
                           <button
-                            className="btn-error"
+                            className="btn-error-graditant"
                             onClick={(e) => handleSell(e, element?.symbol, 100)}
                           >
                             100%
