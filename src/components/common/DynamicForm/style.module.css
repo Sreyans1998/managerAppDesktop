@@ -1,0 +1,12 @@
+.formContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.formAction {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}

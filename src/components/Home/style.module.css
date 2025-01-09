@@ -1,0 +1,131 @@
+.contanier {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.sideBar {
+  width: 15%;
+  height: 100%;
+  background-color: var(--background-color);
+}
+
+.content {
+  width: 85%;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  height: 8%;
+  padding: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--secondary-color);
+}
+
+.innerContent {
+  width: 100%;
+  height: 92%;
+  padding: 2rem 1rem;
+}
+
+.headerActions {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  gap: 1rem;
+}
+
+.dashboardContent {
+  width: 100%;
+  overflow: hidden;
+  height: 92%;
+  display: flex;
+  justify-content: space-between;
+  background-color: var(--primary-color);
+}
+
+.positionContent {
+  background: var(--background-color);
+  height: 100%;
+  z-index: 9;
+  transition: ease-in-out 1s;
+}
+
+.width80 {
+  width: 80%;
+}
+
+.width20 {
+  width: 20%;
+}
+
+.chatSection {
+  width: 30%;
+  height: 80%;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+  z-index: 9;
+  background-color: var(--secondary-color);
+  transition: ease-in-out 1s;
+}
+
+.chatContent {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  padding: 1rem;
+}
+
+.closeChat {
+  height: 9%;
+  padding: 1rem;
+}
+
+.chatHeader {
+  text-shadow: 2px 2px 7px white;
+  font-size: 1.5rem;
+  gap: 1rem;
+  align-items: center;
+  display: flex;
+  height: 10%;
+}
+
+.chatToggleIcon {
+  border: 1px solid var(--border-color-active);
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chatBody {
+  background-color: var(--background-color);
+  height: 79%;
+  border-bottom: 1px solid var(--border-color-active);
+}
+
+.chatFooter {
+  background-color: var(--input-background-color);
+  display: flex;
+  padding: 1rem;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  height: 11%;
+  gap: 1rem;
+}
+
+.chatInput {
+  width: 100%;
+}

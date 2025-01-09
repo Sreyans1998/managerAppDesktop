@@ -1,0 +1,10 @@
+.upgradesContent {
+  height: 100%;
+  padding: 1rem;
+}
+
+.innerContainer {
+  height: 90%;
+  width: 100%;
+  padding: 1rem 0;
+}

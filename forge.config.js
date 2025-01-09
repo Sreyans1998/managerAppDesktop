@@ -7,37 +7,39 @@ const path = require('path');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: path.resolve(__dirname, "icon"),
   },
   rebuildConfig: {},
   makers: [
     {
-      name: '@electron-forge/maker-squirrel',
+      name: "@electron-forge/maker-squirrel",
       config: {
         author: "ZolonTech",
-        description:"This is a manager app to check the data for analyst changes.",
-        name: "manager-app",
+        description:
+          "This is a trading app is created for traders collaboration",
+        name: "trading-app",
         setupIcon: path.resolve(__dirname, "icon.ico"),
-        shortcutName: "manager-app",
+        shortcutName: "trading-app",
         noMsi: true,
-        setupExe: "manager-app.exe"
+        setupExe: "trading-app.exe",
       },
     },
     {
-      name: '@electron-forge/maker-zip',
-      platforms: ['darwin'],
+      name: "@electron-forge/maker-zip",
+      platforms: ["darwin"],
     },
     {
-      name: '@electron-forge/maker-deb',
+      name: "@electron-forge/maker-deb",
       config: {},
     },
     {
-      name: '@electron-forge/maker-rpm',
+      name: "@electron-forge/maker-rpm",
       config: {},
     },
   ],
   plugins: [
     {
-      name: '@electron-forge/plugin-auto-unpack-natives',
+      name: "@electron-forge/plugin-auto-unpack-natives",
       config: {},
     },
     // Fuses are used to enable/disable various Electron functionality

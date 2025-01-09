@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { getRunUpgrades, getUpgrades } from "../api";
-import Table from "./table";
+import Table from "../../common/tables";
+import { getRunUpgrades, getUpgrades } from "../../../api";
+import style from "./style.module.css";
 
 const Upgrades = () => {
   const [upgrades, setUpgrades] = useState([]);
@@ -35,18 +36,18 @@ const Upgrades = () => {
 
   return (
     <>
-      <div className="my-1">
+      <div className={style.upgradesContent}>
         <div className="p-3">
           <button
-            className="btnPrimary float-right"
+            className="btn btn-success"
             onClick={handleRunUpgrades}
           >
             Refresh Sentiments
           </button>
         </div>
         {upgrades && upgrades.length > 0 && (
-          <div>
-            <Table tableContent={upgrades} />
+          <div className={style.innerContainer}>
+            <Table tableData={upgrades} />
           </div>
         )}
       </div>

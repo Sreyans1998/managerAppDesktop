@@ -196,3 +196,16 @@ export function getRunUpgrades(payload) {
         return error;
       });
 };
+
+export function getTweets() {
+    return fetch(baseUrl + "api/get_tweets", {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((response) => {
+        return response;
+    }).catch((error) => {
+        return error;
+    });
+};

@@ -1,0 +1,32 @@
+.feeds {
+  position: absolute;
+  background-color: var(--primary-color);
+  border: none;
+  color: white;
+  padding: 5px;
+  pointer-events: none;
+  width: 240px;
+  height: 150px;
+  margin-top: 10%;
+  margin-left: 30%;
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 1px 10px 5px rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+}
+
+.colorScale {
+  list-style-type: none;
+  padding-left: 0;
+  display: grid;
+  gap: 0.3em;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}

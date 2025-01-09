@@ -3,6 +3,8 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
+import style from "./style.module.css";
+import classNames from "classnames";
 
 const Positions = ({
   positions,
@@ -267,46 +269,43 @@ const Positions = ({
   };
 
   return (
-    <div className="postionsContent">
+    <div className={style.content}>
       <span
-        className="sliderButton"
+        className={style.sliderButton}
         onClick={() => setShowPosition(!showPosition)}
       >
         {showPosition ? <ArrowBackIosNewIcon /> : <ArrowForwardIosIcon />}
       </span>
-      <div className="w-100">
-        <div className="headingbar">POSITION</div>
-        <div className="tabActions w-100 mt-2 d-flex justify-content-end px-2">
-          <button
-            className="btn-error"
-            onClick={handleSellAll}
-          >
+      <div className={style.content}>
+        <div className={style.headingbar}>
+          POSITION
+          <button className="btn btn-error" onClick={handleSellAll}>
             SELL ALL
           </button>
         </div>
-        {!showPosition ? (
-          <div className="quickPosition">
-            <ul className="positions">
+        {showPosition ? (
+          <div className={style.quickPosition}>
+            <ul className={style.positions}>
               {positions && positions.length > 0
                 ? positions.map((item, index) => {
                     return (
-                      <li className="tickerContent" key={index}>
+                      <li className={style.tickerContent} key={index}>
                         <span>{item.symbol}</span>
-                        <div className="px-1">
+                        <div className={style.tickerAction}>
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, item?.symbol, 20)}
                           >
                             20%
                           </button>
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, item?.symbol, 80)}
                           >
                             80%
                           </button>
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, item?.symbol, 100)}
                           >
                             100%
@@ -319,13 +318,13 @@ const Positions = ({
             </ul>
           </div>
         ) : (
-          <ul className="positions">
+          <ul className={style.positions}>
             {positions && positions.length > 0
               ? positions.map((element, index) => {
                   return (
-                    <li key={index}>
-                      <div className="tickerContent row mx-0 my-1">
-                        <div className="tickerName col-1">
+                    <>
+                      <li key={index} className={style.tickerContent}>
+                        <div className={style.tickerName}>
                           {element?.symbol}
                           <span
                             className="d-flex ms-3"
@@ -338,138 +337,135 @@ const Positions = ({
                             )}
                           </span>
                         </div>
-                        <div className="tickerFields col-4">
-                          <div className="d-flex justify-content-center align-items-center">
-                            <input
-                              type="text"
-                              placeholder="Stop price"
-                              title="Stop Price"
-                              className="tickerInputs ms-4"
-                              name="stopPrice"
-                              value={element?.stopPrice}
-                              onChange={(e) =>
-                                handleOnChangeAddStop(e, element?.symbol)
-                              }
-                            />
-                            <button
-                              className="btn-error"
-                              onClick={(e) =>
-                                handleAddStop(
-                                  e,
-                                  element?.symbol,
-                                  element?.stopPrice
-                                )
-                              }
-                            >
-                              Stop
-                            </button>
-                            <button
-                              className="btnWarning"
-                              onClick={(e) =>
-                                handleCancelStop(e, element?.symbol)
-                              }
-                            >
-                              CANCEL
-                            </button>
-                          </div>
-                        </div>
-                        <div className="tickerFields col-4">
-                          <div className="d-flex justify-content-center align-items-center">
-                            <input
-                              type="text"
-                              placeholder="MIT price"
-                              title="MIT Price"
-                              className="tickerInputs ms-4"
-                              name="MITPrice"
-                              value={element?.MITPrice}
-                              onChange={(e) =>
-                                handleOnChangeAddMIT(e, element?.symbol)
-                              }
-                            />
-                            <button
-                              className="btnPrimary"
-                              onClick={(e) =>
-                                handleAddMIT(
-                                  e,
-                                  element?.symbol,
-                                  element?.MITPrice
-                                )
-                              }
-                            >
-                              MIT
-                            </button>
-                            <button
-                              className="btnWarning"
-                              onClick={(e) =>
-                                handleCancelMIT(e, element?.symbol)
-                              }
-                            >
-                              CANCEL
-                            </button>
-                          </div>
-                        </div>
-                        <div className="col-3 my-0">
+                        <div className={style.tickerFilds}>
+                          <input
+                            type="text"
+                            placeholder="Stop price"
+                            title="Stop Price"
+                            className="tickerInputs ms-4"
+                            name="stopPrice"
+                            value={element?.stopPrice}
+                            onChange={(e) =>
+                              handleOnChangeAddStop(e, element?.symbol)
+                            }
+                          />
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error"
+                            onClick={(e) =>
+                              handleAddStop(
+                                e,
+                                element?.symbol,
+                                element?.stopPrice
+                              )
+                            }
+                          >
+                            Stop
+                          </button>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={(e) =>
+                              handleCancelStop(e, element?.symbol)
+                            }
+                          >
+                            CANCEL
+                          </button>
+                        </div>
+                        <div className={style.tickerFilds}>
+                          <input
+                            type="text"
+                            placeholder="MIT price"
+                            title="MIT Price"
+                            className="tickerInputs ms-4"
+                            name="MITPrice"
+                            value={element?.MITPrice}
+                            onChange={(e) =>
+                              handleOnChangeAddMIT(e, element?.symbol)
+                            }
+                          />
+                          <button
+                            className="btn btn-success"
+                            onClick={(e) =>
+                              handleAddMIT(
+                                e,
+                                element?.symbol,
+                                element?.MITPrice
+                              )
+                            }
+                          >
+                            MIT
+                          </button>
+                          <button
+                            className="btn btn-secondary"
+                            onClick={(e) => handleCancelMIT(e, element?.symbol)}
+                          >
+                            CANCEL
+                          </button>
+                        </div>
+                        <div className={style.tickerAction}>
+                          <button
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, element?.symbol, 20)}
                           >
                             20%
                           </button>
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, element?.symbol, 80)}
                           >
                             80%
                           </button>
                           <button
-                            className="btn-error-graditant"
+                            className="btn btn-error-graditant"
                             onClick={(e) => handleSell(e, element?.symbol, 100)}
                           >
                             100%
                           </button>
                         </div>
-                      </div>
-                      {element.isActive ? (
-                        <div className="tickerSubContent">
-                          <div className="d-flex my-2 mx-0">
-                            <div className="d-flex mx-2">
-                              Analyst:{" "}
-                              <select
-                                className="selectInput ms-2"
-                                value=""
-                                onChange={(e) =>
-                                  handleAnalystChange(e, element?.symbol)
-                                }
-                              >
-                                {element?.analyst && element?.analyst.length > 0
-                                  ? element?.analyst.map((item) => {
-                                      return (
-                                        <option value={item?.nickname}>
-                                          {item?.nickname}
-                                        </option>
-                                      );
-                                    })
-                                  : null}
-                              </select>
+                      </li>
+                      <li>
+                        {element.isActive ? (
+                          <div className={style.tickerContent}>
+                            <div className={style.analystContent}>
+                              <div>
+                                Analyst:{" "}
+                                <select
+                                  className={style.selectInput}
+                                  value=""
+                                  onChange={(e) =>
+                                    handleAnalystChange(e, element?.symbol)
+                                  }
+                                >
+                                  {element?.analyst &&
+                                  element?.analyst.length > 0
+                                    ? element?.analyst.map((item) => {
+                                        return (
+                                          <option value={item?.nickname}>
+                                            {item?.nickname}
+                                          </option>
+                                        );
+                                      })
+                                    : null}
+                                </select>
+                              </div>
+                              <div>
+                                Entry Price: {element?.accounts[0]?.entry}
+                              </div>
                             </div>
-                            <div className="d-flex mx-2">
-                              Entry Price: {element?.accounts[0]?.entry}
-                            </div>
-                          </div>
-                          <div className="d-flex">
                             {element?.accounts && element?.accounts.length > 0
                               ? element?.accounts.map((item) => {
                                   return (
                                     <>
-                                      <div className="m-2 fw-bolder d-grid">
-                                        {item?.nickname}: {item?.position}
-                                        <span className="fw-normal">
+                                      <div className={style.analystContent}>
+                                        <span className={classNames(style.fontHighlight, style.fontBorder)}>
+                                          {item?.nickname}: {item?.position}
+                                        </span>
+                                        <span className={style.fontHighlight}>
                                           Stop Price:{" "}
                                           {parseFloat(
                                             element?.orderStopPrice
                                           ).toFixed(2)}
                                         </span>
-                                        <span className="fw-normal">
+                                        <span className={style.fontHighlight}>
                                           MIT Price:{" "}
                                           {parseFloat(
                                             element?.orderMITPrice
@@ -481,9 +477,9 @@ const Positions = ({
                                 })
                               : null}
                           </div>
-                        </div>
-                      ) : null}
-                    </li>
+                        ) : null}
+                      </li>
+                    </>
                   );
                 })
               : null}

@@ -8,10 +8,27 @@ contextBridge.exposeInMainWorld("myAPI", {
 });
 
 contextBridge.exposeInMainWorld("electron", {
-  ipcRenderer: {
-    send: (channel, data) => ipcRenderer.send(channel, data),
-    on: (channel, func) =>
-      ipcRenderer.on(channel, (event, ...args) => func(...args)),
+  send: (channel, data) => {
+    const validChannels = ["LOG-EVENT"];
+    if (validChannels.includes(channel)) {
+      ipcRenderer.send(channel, data);
+    }
+  },
+
+  // Expose functions to receive messages from the main process
+  on: (channel, callback) => {
+    const validChannels = []; // Add channels you expect to receive data from
+    if (validChannels.includes(channel)) {
+      ipcRenderer.on(channel, (event, ...args) => callback(...args));
+    }
+  },
+
+  // Utility to invoke Electron APIs
+  invoke: (channel, data) => {
+    const validChannels = []; // Add channels for APIs that return promises
+    if (validChannels.includes(channel)) {
+      return ipcRenderer.invoke(channel, data);
+    }
   },
 });
 
