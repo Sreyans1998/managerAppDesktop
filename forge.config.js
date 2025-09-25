@@ -43,6 +43,25 @@ module.exports = {
       name: "@electron-forge/plugin-auto-unpack-natives",
       config: {},
     },
+    {
+      name: '@electron-forge/plugin-webpack',
+      config: {
+        mainConfig: './webpack.main.config.js',
+        renderer: {
+          config: './webpack.renderer.config.js',
+          entryPoints: [
+            {
+              html: './public/index.html',
+              js: './src/index.js',
+              name: 'main_window',
+              preload: {
+                js: './src/preload.js',
+              },
+            },
+          ],
+        },
+      },
+    },
     // Fuses are used to enable/disable various Electron functionality
     // at package time, before code signing the application
     new FusesPlugin({
@@ -54,43 +73,5 @@ module.exports = {
       [FuseV1Options.EnableEmbeddedAsarIntegrityValidation]: true,
       [FuseV1Options.OnlyLoadAppFromAsar]: true,
     }),
-
-    // new WebpackPlugin({
-    //   mainConfig: {
-    //     entry: './src/index.js',
-    //     output: {
-    //       filename: 'bundle.js',
-    //       path: path.resolve(__dirname, 'dist')
-    //     },
-    //     module: {
-    //       rules: [
-    //         {
-    //           test: /\.(js|jsx)$/,
-    //           exclude: /node_modules/,
-    //           use: {
-    //             loader: 'babel-loader'
-    //           }
-    //         },
-    //       ]
-    //     },
-    //     resolve: {
-    //       fallback: {
-    //         "path": require.resolve("path-browserify"),
-    //         "fs": require.resolve("browserify-fs"),
-    //         "stream": require.resolve("stream-browserify")
-    //       }
-    //     }
-    //   },
-    //   renderer: {
-    //     config: require('./webpack.renderer.config.js'), // Add this line to load the renderer config
-    //     entryPoints: [
-    //       {
-    //         html: './public/index.html', // Adjust this path to your actual HTML file
-    //         js: './src/index.js', // Adjust this path to your actual renderer JS file
-    //         name: 'main_window',
-    //       },
-    //     ],
-    //   },
-    // }),
   ],
 };
