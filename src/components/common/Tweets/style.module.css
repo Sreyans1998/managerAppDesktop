@@ -1,0 +1,34 @@
+.tweetContent{
+display: grid;
+justify-content: center;
+align-items: center;
+gap: 1rem;
+}
+
+.tweetSection {
+  padding: 15px;
+  border: 1px solid var(--border-color);
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  opacity: 1;
+  transform: translateY(-20px);
+  animation: fadeIn 0.5s forwards;
+  border-radius: 6px;
+}
+
+.tweetSection:hover {
+  background-color: var(--secondary-color);
+  border-color: var(--border-color-active);
+}
+
+.tweetSection strong {
+  color: var(--accent-color);
+  /* Highlight tweet ID or important text */
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

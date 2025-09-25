@@ -1,27 +1,9 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-contextBridge.exposeInMainWorld("myAPI", {
-  // Provide functions or properties here
-  greet(name) {
-    console.log(`Hello from Electron, ${name}!`);
-  },
-});
-
-contextBridge.exposeInMainWorld("electron", {
-  ipcRenderer: {
-    send: (channel, data) => ipcRenderer.send(channel, data),
-    on: (channel, func) =>
-      ipcRenderer.on(channel, (event, ...args) => func(...args)),
-  },
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-  const replaceText = (selector, text) => {
-    const element = document.querySelector(selector);
-    if (element) element.textContent = text;
-  };
-
-  for (const type of ["chrome", "node", "electron"]) {
-    replaceText(`.${type}-version`, process.versions[type]);
-  }
+contextBridge.exposeInMainWorld("electronAPI", {
+  setLoginCredentials: (title) => ipcRenderer.send("set-credentials", title),
+  getLoginCredentials: (value) => ipcRenderer.send("get-credentials", value),
+  deleteLoginCredentials: (value) => ipcRenderer.send("delete-credentials", value),
+  sendLoginCredentials: (callback) =>
+    ipcRenderer.on("send-credentials", (_event, value) => callback(value)),
 });

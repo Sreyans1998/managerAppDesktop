@@ -1,0 +1,54 @@
+.sideBarContainer {
+  padding: 0.2rem;
+  height: 100%;
+}
+
+.tabs {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
+}
+
+.tabSection {
+  display: grid;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 1rem;
+  height: fit-content;
+  overflow: auto;
+}
+
+.tabHeader {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--text-secondary-color);
+}
+
+.subTabSection {
+  display: grid;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  height: 20rem;
+  overflow: auto;
+}
+
+.tab {
+  cursor: pointer;
+  color: var(--text-secondary-color);
+}
+
+.activeTab {
+  cursor: pointer;
+  color: var(--text-color);
+  border: none;
+  font-size: 1.2rem;
+}
+
+.subTabContent {
+  display: grid;
+  width: 100%;
+  height: 15rem;
+  overflow: auto;
+  padding: 1rem;
+}
