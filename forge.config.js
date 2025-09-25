@@ -8,6 +8,7 @@ module.exports = {
   packagerConfig: {
     asar: true,
     icon: path.resolve(__dirname, "icon"),
+    extraFiles: [".env"],
   },
   rebuildConfig: {},
   makers: [

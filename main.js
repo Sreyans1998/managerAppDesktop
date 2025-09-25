@@ -1,17 +1,18 @@
-const { app, BrowserWindow, ipcMain, dialog } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const squirrelStartup = require("electron-squirrel-startup");
 const fs = require("fs");
-const { autoUpdater } = require("electron-updater");
+require("dotenv").config({
+  path: path.join(__dirname, ".env"),
+});
 
 if (squirrelStartup) {
   app.quit();
 }
 
-let launchTimestamp = new Date().toISOString().replace(/:/g, "-");
-const logFileName = `${launchTimestamp}.txt`;
 let mainWin;
-const createWindow = () => {
+const credentialsFile = path.join(app.getPath("userData"), "credentials.json");
+const createWindow = async () => {
   mainWin = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -35,107 +36,75 @@ const createWindow = () => {
   // });
   // console.log({ buildFilePath });
   // mainWin.loadURL(buildFilePath);
-  mainWin.loadURL("http://rdpusa.zolontech.com:3000/");
-  autoUpdater.checkForUpdatesAndNotify();
+  const location = await fetch("https://ipinfo.io/json?token=ce4631c82562d7")
+    .then((response) => response.json())
+
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => console.error("Error fetching geolocation data:", error));
+
+  console.log(process.env.MY_API_KEY);
+  mainWin.loadURL(
+    `http://${
+      ["US"].includes(location?.country)
+        ? process.env.US_URL
+        : process.env.MAIN_URL
+    }:${process.env.PORT}/`
+  );
 };
 
-app.on("ready", () => {
-  createWindow();
+app.on("ready", createWindow);
 
-  autoUpdater.on("checking-for-update", () => {
-    logErrorToFile({
-      messageType: "INFO",
-      message: "Checking for updates...",
-      payload: "",
-    });
-  });
-
-  autoUpdater.on("update-available", (info) => {
-    logErrorToFile({
-      messageType: "INFO",
-      message: "Update available.",
-      payload: info,
-    });
-
-    dialog.showMessageBox(mainWin, {
-      type: "info",
-      title: "Update Available",
-      message:
-        "A new version is available. It will be downloaded in the background.",
-    });
-  });
-
-  autoUpdater.on("update-not-available", (info) => {
-    logErrorToFile({
-      messageType: "INFO",
-      message: "No updates available.",
-      payload: info,
-    });
-  });
-
-  autoUpdater.on("error", (err) => {
-    logErrorToFile({
-      messageType: "ERROR",
-      message: "Error while updating.",
-      payload: err.stack || err,
-    });
-
-    dialog.showErrorBox(
-      "Update Error",
-      err == null ? "Unknown error" : err.toString()
-    );
-  });
-
-  autoUpdater.on("download-progress", (progressObj) => {
-    logErrorToFile({
-      messageType: "INFO",
-      message: "Download in progress...",
-      payload: progressObj,
-    });
-  });
-
-  autoUpdater.on("update-downloaded", () => {
-    logErrorToFile({
-      messageType: "INFO",
-      message: "Update downloaded.",
-      payload: "",
-    });
-
-    dialog
-      .showMessageBox(mainWin, {
-        type: "info",
-        title: "Update Ready",
-        message:
-          "A new version has been downloaded. Would you like to install it now?",
-        buttons: ["Yes", "Later"],
-      })
-      .then((result) => {
-        if (result.response === 0) {
-          autoUpdater.quitAndInstall(); // Quit and install the update
-        }
-      });
-  });
-});
-
-const logErrorToFile = (eventContent) => {
-  const { message, payload, messageType } = eventContent;
-  // console.log("desktop path", app.getPath('desktop'));
-  const logDir = path.join(app.getPath("desktop"), "Manager_App_Admin");
-  const logPath = path.join(logDir, `${logFileName}`);
-
-  // Create directory if it doesn't exist
-  if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
+const sendCredentials = (title) => {
+  try {
+    console.log(title);
+    if (fs.existsSync(credentialsFile)) {
+      const credentials = JSON.parse(fs.readFileSync(credentialsFile, "utf8"));
+      mainWin.webContents.send("send-credentials", credentials);
+    } else {
+      console.log("Credentials file not found, sending empty data.");
+      mainWin.webContents.send("send-credentials", { email: "", password: "" });
+    }
+    // mainWin.webContents.send("send-credentials", {
+    //   email: "sreyans@gmail.com",
+    //   password: "Sreyans",
+    // });
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  const timestamp = new Date().toISOString();
-  const logMessage = `${messageType}: [${timestamp}] : ${message} => ${payload}\n`;
-  fs.appendFile(logPath, logMessage, (err) => {
-    if (err) throw err;
-  });
+const setCredentials = (data) => {
+  try {
+    console.log(credentialsFile);
+    fs.writeFileSync(credentialsFile, JSON.stringify(data, null, 2), "utf8");
+    console.log("Credentials saved successfully!");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteCredentials = () => {
+  try {
+    if (fs.existsSync(credentialsFile)) {
+      fs.unlinkSync(credentialsFile);
+      console.log("Credentials file deleted successfully.");
+    } else {
+      console.log("No credentials file found to delete.");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 // Handle error messages from renderer
-ipcMain.on("LOG-EVENT", (event, eventContent) => {
-  logErrorToFile(eventContent);
+ipcMain.on("get-credentials", (event, title) => {
+  sendCredentials(title);
+});
+ipcMain.on("delete-credentials", (event, value) => {
+  deleteCredentials(value);
+});
+ipcMain.on("set-credentials", (event, title) => {
+  setCredentials(title);
 });
