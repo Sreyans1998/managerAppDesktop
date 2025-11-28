@@ -1,18 +1,43 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
-const squirrelStartup = require("electron-squirrel-startup");
 const fs = require("fs");
-require("dotenv").config({
-  path: path.join(__dirname, ".env"),
-});
+const squirrelStartup = require("electron-squirrel-startup");
+// const dotenv = require("dotenv");
 
 if (squirrelStartup) {
   app.quit();
 }
 
 let mainWin;
+
+// Path to store credentials
 const credentialsFile = path.join(app.getPath("userData"), "credentials.json");
+
+console.log(app.getPath("userData"));
+
+// let envPath;
+
+// // When packaged
+// if (app.isPackaged) {
+//   envPath = path.join(process.resourcesPath, ".env");
+// } else {
+//   // When running in development
+//   envPath = path.join(__dirname, ".env");
+// }
+
+// if (fs.existsSync(envPath)) {
+//   dotenv.config({ path: envPath });
+//   console.log("Loaded env from:", envPath);
+// } else {
+//   console.log("⚠️ .env not found at:", envPath);
+// }
+
+const MAIN_URL = "64.19.136.162";
+const US_URL = "64.19.136.162";
+const PORT = "5012";
+
 const createWindow = async () => {
+
   mainWin = new BrowserWindow({
     webPreferences: {
       nodeIntegration: true,
@@ -28,7 +53,7 @@ const createWindow = async () => {
 
   mainWin.maximize();
   mainWin.removeMenu();
-  mainWin.webContents.openDevTools();
+  // mainWin.webContents.openDevTools();
 
   // const buildFilePath = url.format({
   //   pathname: path.join(__dirname, "./build/index.html"),
@@ -37,51 +62,43 @@ const createWindow = async () => {
   // console.log({ buildFilePath });
   // mainWin.loadURL(buildFilePath);
   const location = await fetch("https://ipinfo.io/json?token=ce4631c82562d7")
-    .then((response) => response.json())
+    .then((res) => res.json())
+    .catch((err) => {
+      console.error("Error fetching geolocation:", err);
+      return {};
+    });
 
-    .then((data) => {
-      return data;
-    })
-    .catch((error) => console.error("Error fetching geolocation data:", error));
+  console.log("MAIN_URL: ", MAIN_URL);
+  console.log("US_URL: ", US_URL);
 
-  console.log(process.env.MY_API_KEY);
-  mainWin.loadURL(
-    `http://${
+  const serverUrl = `http://${
       ["US"].includes(location?.country)
-        ? process.env.US_URL
-        : process.env.MAIN_URL
-    }:${process.env.PORT}/`
-  );
+        ? MAIN_URL
+        : US_URL
+    }:${PORT}/`
+  mainWin.loadURL(serverUrl);
 };
 
-app.on("ready", createWindow);
-
-const sendCredentials = (title) => {
+// Credentials handling
+const sendCredentials = () => {
   try {
-    console.log(title);
     if (fs.existsSync(credentialsFile)) {
       const credentials = JSON.parse(fs.readFileSync(credentialsFile, "utf8"));
       mainWin.webContents.send("send-credentials", credentials);
     } else {
-      console.log("Credentials file not found, sending empty data.");
       mainWin.webContents.send("send-credentials", { email: "", password: "" });
     }
-    // mainWin.webContents.send("send-credentials", {
-    //   email: "sreyans@gmail.com",
-    //   password: "Sreyans",
-    // });
   } catch (error) {
-    console.log(error);
+    console.log("Error sending credentials:", error);
   }
 };
 
 const setCredentials = (data) => {
   try {
-    console.log(credentialsFile);
     fs.writeFileSync(credentialsFile, JSON.stringify(data, null, 2), "utf8");
     console.log("Credentials saved successfully!");
   } catch (error) {
-    console.log(error);
+    console.log("Error saving credentials:", error);
   }
 };
 
@@ -90,21 +107,15 @@ const deleteCredentials = () => {
     if (fs.existsSync(credentialsFile)) {
       fs.unlinkSync(credentialsFile);
       console.log("Credentials file deleted successfully.");
-    } else {
-      console.log("No credentials file found to delete.");
     }
   } catch (error) {
-    console.log(error);
+    console.log("Error deleting credentials:", error);
   }
 };
 
-// Handle error messages from renderer
-ipcMain.on("get-credentials", (event, title) => {
-  sendCredentials(title);
-});
-ipcMain.on("delete-credentials", (event, value) => {
-  deleteCredentials(value);
-});
-ipcMain.on("set-credentials", (event, title) => {
-  setCredentials(title);
-});
+// IPC handlers
+ipcMain.on("get-credentials", sendCredentials);
+ipcMain.on("set-credentials", (event, data) => setCredentials(data));
+ipcMain.on("delete-credentials", deleteCredentials);
+
+app.on("ready", createWindow);
